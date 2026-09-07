@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日経TEST 1か月の進め方</title>
+<style>
+:root{
+  --paper:#F6F3EC;
+  --paper-2:#EDE9DE;
+  --rule:#DAD3C4;
+  --navy:#16233F;
+  --navy-soft:#3D4E72;
+  --ink:#22252C;
+  --ink-soft:#6E6A61;
+  --brass:#A8761F;
+  --mincho:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif;
+  --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Meiryo",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--gothic);font-size:15.5px;line-height:1.85;
+  -webkit-font-smoothing:antialiased;
+}
+main{max-width:660px;margin:0 auto;padding:0 22px 90px}
+
+/* ---- masthead ---- */
+header{padding:52px 0 30px}
+.kicker{font-size:12.5px;letter-spacing:.16em;color:var(--brass);margin-bottom:16px}
+h1{font-family:var(--mincho);font-size:clamp(29px,7vw,40px);font-weight:600;line-height:1.35;letter-spacing:.01em}
+.lede{margin-top:20px;font-size:15px;color:var(--ink-soft);line-height:1.9;max-width:34em}
+
+/* ---- goal band ---- */
+.goal{
+  background:var(--navy);color:#E9ECF3;border-radius:4px;
+  padding:26px 24px;margin:32px 0 8px;
+}
+.goal h2{font-family:var(--mincho);font-size:19px;font-weight:400;margin-bottom:6px;color:#fff}
+.goal p{font-size:14px;line-height:1.85;color:#B9C3D8}
+.split{display:flex;gap:0;margin-top:22px;border-top:1px solid #2B3A5C;padding-top:18px}
+.split div{flex:1;text-align:center}
+.split b{display:block;font-family:var(--mincho);font-size:32px;font-weight:400;color:#fff;line-height:1.2}
+.split span{font-size:11.5px;color:#8A97B2}
+
+/* ---- sections ---- */
+section{margin-top:52px}
+h2.sec{
+  font-family:var(--mincho);font-size:23px;font-weight:600;
+  padding-bottom:12px;border-bottom:2px solid var(--navy);margin-bottom:24px;
+}
+h3{font-size:16px;font-weight:700;margin:30px 0 10px}
+p{margin-bottom:14px}
+p:last-child{margin-bottom:0}
+strong{font-weight:700;background:linear-gradient(transparent 62%,rgba(168,118,31,.22) 62%)}
+
+/* ---- allocation table ---- */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0 18px}
+th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-size:12px;color:var(--ink-soft);font-weight:400;letter-spacing:.04em;border-bottom:1px solid var(--navy)}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.total td{border-bottom:none;font-weight:700;padding-top:14px}
+.pri{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brass);margin-right:7px;vertical-align:1px}
+.pri.mid{background:#D9BE86}
+.pri.low{background:var(--rule)}
+.note{font-size:13px;color:var(--ink-soft);line-height:1.8;margin-top:-8px}
+
+.ref{padding:16px 0;border-bottom:1px solid var(--rule)}
+.ref:last-of-type{border-bottom:none}
+.ref-theme{font-family:var(--mincho);font-size:17px;font-weight:600;margin-bottom:4px}
+.ref-q{font-size:13.5px;color:var(--ink-soft);margin-bottom:11px}
+.ref a{display:block;color:var(--navy);font-size:14px;text-decoration:none;border-left:2px solid var(--brass);padding:2px 0 2px 11px;margin-bottom:9px;word-break:break-all}
+.ref a:hover{background:var(--paper-2)}
+.ref a b{display:block;font-weight:700;text-decoration:underline;text-underline-offset:2px;word-break:normal}
+.ref a span{font-size:11.5px;color:var(--ink-soft)}
+
+/* ---- weeks ---- */
+.week{border-left:2px solid var(--rule);padding:0 0 30px 22px;position:relative}
+.week:last-child{padding-bottom:6px}
+.week::before{
+  content:"";position:absolute;left:-6px;top:7px;width:10px;height:10px;
+  border-radius:50%;background:var(--brass);
+}
+.week-no{font-size:12px;letter-spacing:.1em;color:var(--brass);margin-bottom:3px}
+.week h3{font-family:var(--mincho);font-size:20px;font-weight:600;margin:0 0 4px}
+.week-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:12px}
+ul{margin:0 0 12px;padding-left:1.15em}
+li{margin-bottom:7px}
+.why{
+  background:var(--paper-2);border-radius:3px;padding:13px 15px;
+  font-size:13.5px;line-height:1.8;color:#4A4740;
+}
+.why b{color:var(--navy)}
+
+/* ---- daily ---- */
+.day{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--rule)}
+.day:last-child{border-bottom:none}
+.day-when{width:6.5em;flex-shrink:0;font-size:13px;color:var(--ink-soft)}
+.day-what b{display:block;font-size:14.5px;margin-bottom:2px}
+.day-what span{font-size:13.5px;color:var(--ink-soft)}
+
+/* ---- dont ---- */
+.dont li{color:var(--ink-soft)}
+.dont li b{color:var(--ink)}
+
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--ink-soft);line-height:1.8}
+
+@media (max-width:560px){
+  table,thead,tbody,tr,th,td{display:block;width:100%}
+  thead{position:absolute;left:-9999px}
+  table{border-collapse:separate}
+  tr{border:1px solid var(--rule);border-radius:3px;padding:4px 12px 10px;margin-bottom:12px}
+  td{border-bottom:none;padding:9px 0 0}
+  td[data-l]:not([data-l=""])::before{
+    content:attr(data-l);display:block;font-size:11px;letter-spacing:.06em;
+    color:var(--brass);margin-bottom:2px;
+  }
+  td.n{text-align:left}
+  tr.total{border:none;padding:2px 0 0}
+  tr.total td{font-weight:700}
+  .ref a{word-break:break-word}
+  .day{flex-direction:column;gap:2px}
+  .day-when{width:auto;font-size:11.5px;letter-spacing:.06em;color:var(--brass)}
+  header{padding:36px 0 24px}
+  main{padding:0 18px 70px}
+}
+@media print{
+  body{background:#fff;font-size:10.5pt}
+  main{max-width:none;padding:0}
+  section{break-inside:avoid}
+  .goal{background:#fff;color:#000;border:1px solid #999}
+  .goal h2,.split b{color:#000}
+  .goal p,.split span{color:#444}
+}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <p class="kicker">日経TEST ／ 1か月の進め方</p>
+  <h1>目標600点。<br>公式テキスト1冊で届かせる。</h1>
+  <p class="lede">
+    やることは1冊を2周し、練習問題を2回通すこと。それだけです。
+    教材を増やさないことが、この1か月では最大の戦略になります。
+  </p>
+</header>
+
+<div class="goal">
+  <h2>なぜ600点は「届く」目標なのか</h2>
+  <p>
+    日経TESTは合否ではなく1000点満点のスコアで、社会人の平均は520〜540点前後。
+    採点はIRT（項目応答理論）で、正解数ではなく「どの難易度の問題に正解したか」で決まります。
+    つまり難問を捨てて、取れる層を確実に取る方が合理的です。
+  </p>
+  <div class="split">
+    <div><b>100</b><span>問</span></div>
+    <div><b>80</b><span>分</span></div>
+    <div><b>48</b><span>秒／問</span></div>
+  </div>
+</div>
+
+<section>
+  <h2 class="sec">戦略の起点：目次が配点表になっている</h2>
+  <p>
+    公式テキストの章立ては、本番の5つの評価軸とそのまま対応しています。
+    出題はビジネス知識60問（基礎・実践・視野の広さで各20問）と考える力40問（各20問）。
+    <strong>つまり1章あたり20問。章ごとの重みが均等です。</strong>
+  </p>
+  <p>
+    ここから、どこに時間を使うべきかが逆算できます。
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>テキストの章</th><th>内容</th><th class="n">出題数</th><th class="n">目安</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-l="テキストの章"><span class="pri"></span>第1章 基礎知識</td>
+        <td data-l="内容">GDP／景気指標／金利と金融市場／為替市場／株価と企業の「稼ぐ力」の指標</td>
+        <td class="n" data-l="出題数">20問</td><td class="n" data-l="目安">18</td>
+      </tr>
+      <tr>
+        <td data-l="テキストの章"><span class="pri mid"></span>第2章 実践知識</td>
+        <td data-l="内容">米国経済／中国経済／自動車／半導体／素材・エネルギー／建設・不動産・運輸</td>
+        <td class="n" data-l="出題数">20問</td><td class="n" data-l="目安">12</td>
+      </tr>
+      <tr>
+        <td data-l="テキストの章"><span class="pri low"></span>第3章 視野の広さ</td>
+        <td data-l="内容">政治／国連・国際機関／脱炭素／AI・生成AI・AGI／人口構成と世代</td>
+        <td class="n" data-l="出題数">20問</td><td class="n" data-l="目安">12</td>
+      </tr>
+      <tr>
+        <td data-l="テキストの章"><span class="pri"></span>第4章 知識を知恵にする力</td>
+        <td data-l="内容">抽象型／仲間外れ・仲間探し型</td>
+        <td class="n" data-l="出題数">20問</td><td class="n" data-l="目安">12</td>
+      </tr>
+      <tr>
+        <td data-l="テキストの章"><span class="pri"></span>第5章 知恵を活用する力</td>
+        <td data-l="内容">帰結型／具象化型</td>
+        <td class="n" data-l="出題数">20問</td><td class="n" data-l="目安">12</td>
+      </tr>
+      <tr class="total"><td colspan="2" data-l="テキストの章">濃い●から順に時間を寄せる</td><td class="n" data-l="出題数">100問</td><td class="n" data-l="目安">66</td></tr>
+    </tbody>
+  </table>
+  <p class="note">
+    「目安」は時間配分を決めるための目標であって、スコア換算ではありません。
+    採点はIRTなので、正解数が同じでも解けた問題の難易度でスコアは変わります。
+    66問という数字は、当日の目標ではなく、勉強中にどこへ力を入れるかの配分表として使ってください。
+  </p>
+
+  <h3>優先順位が「第1章」と「第4・5章」になる理由</h3>
+  <p>
+    <strong>第1章は、覚えれば必ず取れる唯一の領域です。</strong>
+    GDPや金利、PER・PBRといった指標の定義は年で変わりません。
+    経済ニュースを日常的に見ていない人にとっては、ここがそのまま伸びしろになります。
+  </p>
+  <p>
+    <strong>第4・5章は、知識ではなく出題形式の問題です。</strong>
+    抽象型、仲間外れ・仲間探し型、帰結型、具象化型。
+    パターンが限られているので、初見で面食らうか、型を知っているかで正答率がまるで変わります。
+    しかも合計40問と最大のブロック。ここを「考える力だから対策できない」と放置するのが、
+    独学で最も多い取りこぼしです。
+  </p>
+  <p>
+    <strong>第2章は、優先度が低いのではなく「範囲を切る」章です。</strong>
+    次の節で見るとおり、今年の改訂が最も集中したのがこの章で、内容の重要度はむしろ高い。
+    ただし産業の話は掘ろうと思えば無限に掘れてしまうため、
+    テキストに書かれている範囲で止める、という制約をかけます。時間ではなく、深さを削る章です。
+  </p>
+  <p>
+    第3章はさらに範囲が広く、1か月では網羅できません。読んで終わりにします。
+    第2章と同じく、テキストの外へは出ないでください。
+  </p>
+</section>
+
+<section>
+  <h2 class="sec">改訂の読み解き：今年の重点テーマ</h2>
+  <p>
+    2026-27年版は「歴史的株高、積極財政への転換、トランプ関税」を踏まえて紙面を大幅改訂したとされています。
+    どのページが変わったかは公表されていないため、<strong>前年版（2025-26年版）と今年版の目次見出しを突き合わせて推定しました。</strong>
+    以下は各書店に掲載された抜粋見出しの比較で、本文の中身まで確認したものではありません。実物で裏を取ってください。
+  </p>
+
+  <h3>目次に現れた3つの変化</h3>
+  <table>
+    <thead>
+      <tr><th>章</th><th>2025-26年版</th><th>2026-27年版</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-l="章">第1章<br>基礎知識</td>
+        <td data-l="2025-26年版">経済のマクロとミクロ／GDP／日本経済の位置／景気指標／雇用と物価</td>
+        <td data-l="2026-27年版">GDP／景気指標／<b>金利と金融市場</b>／<b>為替市場</b>／<b>株価と企業の「稼ぐ力」の指標</b></td>
+      </tr>
+      <tr>
+        <td data-l="章">第2章<br>実践知識</td>
+        <td data-l="2025-26年版">米国経済／中国経済／欧州経済／アジア経済／新興国・グローバルサウス</td>
+        <td data-l="2026-27年版">米国経済／中国経済／<b>自動車</b>／<b>半導体</b>／<b>素材・エネルギー</b>／<b>建設・不動産・運輸</b></td>
+      </tr>
+      <tr>
+        <td data-l="章">第3章<br>視野の広さ</td>
+        <td data-l="2025-26年版">政治／国際機関／脱炭素／AIと量子コンピューター／人口構成と世代</td>
+        <td data-l="2026-27年版">政治／国連・国際機関／脱炭素／<b>AI・生成AI・AGI</b>／人口構成と世代</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>第2章が「地域」から「産業」に変わった</h3>
+  <p>
+    これが最大の構成変更です。前年版は米国・中国・欧州・アジア・新興国という地域軸でしたが、
+    今年版は米国・中国を残しつつ、自動車、半導体、素材・エネルギー、建設・不動産・運輸という産業軸に置き換わっています。
+  </p>
+  <p>
+    <strong>この4産業は、3つの改訂テーマの影響を最も強く受けた産業そのものです。</strong>
+    自動車と鉄鋼・アルミは関税の直撃を受け、半導体はAI需要で株高を牽引し、
+    建設・不動産・運輸は積極財政の投資先と重なります。
+    偶然の並びではなく、3テーマを産業の側から説明する構成に組み替えたと読むのが自然です。
+  </p>
+  <p class="why" style="margin-bottom:14px">
+    <b>手順への反映。</b>第2章は「広く浅く」が基本ですが、
+    各産業を読むときだけは「関税でどう変わったか」「株高とどうつながるか」の一点を意識してください。
+    産業名を覚えるより、産業と3テーマの結び目を1つずつ持つ方が、第4・5章の関連づけ問題にも効きます。
+  </p>
+
+  <h3>第1章に「株価と企業の稼ぐ力の指標」が新設された</h3>
+  <p>
+    前年版で見出しにあった「雇用と物価」が退き、代わりに金利・為替・株価という市場の3項目が並びました。
+    <strong>ROE、PER、PBRといった指標が、基礎知識として正面から扱われるようになった</strong>ということです。
+    ここは用語カードの「会計・財務」パートとそのまま対応します。暗記で確実に取れる領域なので、取りこぼしはゼロにしてください。
+  </p>
+
+  <h3>テキストが書けていない部分がある</h3>
+  <p>
+    2026-27年版の発行は2026年3月です。<strong>3つのテーマは、いずれも発行後にさらに大きく動きました。</strong>
+    ここだけは自分で補う必要があります。逆に言えば、補うべき穴は3つしかありません。
+  </p>
+  <table>
+    <thead>
+      <tr><th>テーマ</th><th>テキストが押さえている範囲</th><th>発行後の動き</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-l="テーマ">歴史的株高</td>
+        <td data-l="テキストが押さえている範囲">2026年初頭までの上昇</td>
+        <td data-l="発行後の動き">5月に過去最大の上げ幅となる3320円高を記録。29日には終値6万6329円と最高値を更新し、年初来の上昇率は3割超。AI・半導体関連に資金が集中</td>
+      </tr>
+      <tr>
+        <td data-l="テーマ">積極財政</td>
+        <td data-l="テキストが押さえている範囲">転換の方向性</td>
+        <td data-l="発行後の動き">骨太方針2026が2026年7月21日に閣議決定。副題は「『責任ある積極財政』元年」で、令和9年度を初年度とする中長期経済財政計画を掲げる</td>
+      </tr>
+      <tr>
+        <td data-l="テーマ">トランプ関税</td>
+        <td data-l="テキストが押さえている範囲">2026年2月20日の最高裁判決まで</td>
+        <td data-l="発行後の動き">IEEPAを根拠とする関税が違法とされ、通商法122条の一律10%を経て、7月24日に通商法301条へ移行。日本は原則12.5%。自動車・鉄鋼などの232条関税は別枠で継続</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="why">
+    <b>補い方。</b>この3点は、それぞれ解説記事を1〜2本読めば足ります。合計で1時間もかかりません。
+    3週目に第3章を読み終えたタイミングで、まとめて確認するのが効率的です。
+    <b>それ以上ニュースを遡らないこと。</b>穴が3つだと分かっている以上、そこだけ埋めれば時事対策は完了です。
+  </p>
+</section>
+
+<section>
+  <h2 class="sec">4週間の手順</h2>
+
+  <div class="week">
+    <p class="week-no">WEEK 1</p>
+    <h3>土台をつくり、ゴールを先に見る</h3>
+    <p class="week-meta">第1章 ／ 第4・5章を下読み ／ 約5時間</p>
+    <ul>
+      <li>ガイダンスと第1章を精読する。図表は飛ばさない</li>
+      <li>知らなかった用語は、その場で用語カードに追加する</li>
+      <li>週末に第4章・第5章を<b>解かずに読む</b>。出題形式だけ頭に入れる</li>
+    </ul>
+    <p class="why">
+      <b>練習問題には手をつけないこと。</b>
+      テキストの100問は、本番形式で実力を測れる唯一の弾です。
+      読んだ直後に解くと手応えは得られますが、3週目の通しが初見でなくなり、
+      「時間内に何問取れるか」が測れなくなります。理解の確認は用語カードで代用してください。
+    </p>
+    <p class="why" style="margin-top:10px">
+      <b>なぜ4・5章を最初に見るのか。</b>
+      あの4つの型を知ってから第2・3章を読むと、「この知識はどう組み合わせて問われるか」という
+      目線で読めるようになります。順番を変えるだけで、同じ時間の密度が上がります。
+    </p>
+  </div>
+
+  <div class="week">
+    <p class="week-no">WEEK 2</p>
+    <h3>産業を、深追いせずに</h3>
+    <p class="week-meta">第2章 実践知識 ／ 約5時間</p>
+    <ul>
+      <li>1日1テーマ。米国経済、中国経済、自動車、半導体、素材・エネルギー、建設・不動産・運輸</li>
+      <li>各テーマは「主要プレーヤーと、いま何が論点か」が言えれば合格</li>
+      <li>産業ごとに、関税・株高・積極財政のどれとどう結びつくかを一行でメモする</li>
+      <li>ここでも章末の練習問題は解かない</li>
+    </ul>
+    <p class="why">
+      <b>今年の改訂が最も集中した章です。</b>
+      重要度は高いのに、掘り出すと切りがない。だから深さに上限をかけます。
+      産業名や企業名を覚えることより、産業と3テーマの結び目を1つずつ持つ方が価値があります。
+      その結び目は、第4・5章の関連づけ問題でそのまま使えます。
+    </p>
+  </div>
+
+  <div class="week">
+    <p class="week-no">WEEK 3</p>
+    <h3>視野を広げ、一度通しで測る</h3>
+    <p class="week-meta">第3章 ／ 練習問題100問（1回目） ／ 約5時間</p>
+    <ul>
+      <li>第3章を読む。政治、国連・国際機関、脱炭素、AI・生成AI・AGI、人口構成と世代</li>
+      <li><b>「テキストが書けていない3点」を1時間で埋める</b>（株高・積極財政・関税の、発行後の動き）</li>
+      <li>週末、<b>練習問題100問を80分計って通しで解く</b></li>
+      <li>採点後、章別の正答率を出す。どこが弱いかを数字で確認する</li>
+    </ul>
+    <p class="why">
+      <b>通しは3週目まで我慢する。</b>
+      初週にやると点が取れず、続ける気力を削がれます。
+      ひととおり読んだ後に測るからこそ、残り1週間を弱点に振り分けられます。
+    </p>
+  </div>
+
+  <div class="week">
+    <p class="week-no">WEEK 4</p>
+    <h3>考える力を仕上げ、誤答だけ潰す</h3>
+    <p class="week-meta">第4・5章の演習 ／ 通し2回目 ／ 約5時間</p>
+    <ul>
+      <li>第4章・第5章の練習問題を、解説まで読み込む。型ごとの解き筋を言葉にする</li>
+      <li>1回目に間違えた問題だけを再演習する。正解した問題はもう触らない</li>
+      <li>試験2〜3日前に2回目の通し</li>
+      <li>前日は用語カードを一周するだけ。新しいことはやらない</li>
+    </ul>
+    <p class="why">
+      <b>2回目の点数は見ないこと。</b>
+      同じ100問なので答えを覚えており、正答率は必ず上がります。
+      2回目の目的は<b>80分の体内時計をつくること</b>だけです。
+      40問目までに何分使ったか、最後の10分で何問残っていたか。見るのはそこだけにしてください。
+    </p>
+    <p class="why" style="margin-top:10px">
+      <b>ここが一番伸びる週です。</b>
+      第4・5章は解説を読んだ瞬間に「そう考えればよかったのか」となる類の問題で、
+      40問分の底上げが一気に効きます。時間を残しておいてください。
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2 class="sec">1日の使い方（30〜60分）</h2>
+  <div class="day">
+    <span class="day-when">朝・移動中</span>
+    <span class="day-what"><b>用語カード　5分</b><span>その日出る分だけ。終わったら閉じる</span></span>
+  </div>
+  <div class="day">
+    <span class="day-when">まとまった時間</span>
+    <span class="day-what"><b>テキスト　25〜45分</b><span>1日1テーマ。読み終えたら見出しに戻って要点を口に出す</span></span>
+  </div>
+  <div class="day">
+    <span class="day-when">寝る前</span>
+    <span class="day-what"><b>見出しの読み返し　3分</b><span>その日読んだ範囲の見出しだけを追う</span></span>
+  </div>
+  <p style="margin-top:18px;font-size:14px;color:var(--ink-soft)">
+    1日およそ45分。週5〜6日回れば1か月で約20時間で、これが4週間の合計と一致します。
+    毎日できなくても構いません。ただし用語カードだけは、間隔をあけると効果が落ちるので毎日開いてください。
+  </p>
+
+  <h3>遅れたときに削る順番</h3>
+  <p>
+    1か月の計画は必ずどこかで崩れます。崩れたときに何から捨てるかを、先に決めておいてください。
+  </p>
+  <ol style="padding-left:1.3em">
+    <li>まず<b>第3章</b>を読み飛ばす。見出しと図表だけ追う</li>
+    <li>次に<b>第2章</b>を6テーマから4テーマに絞る（米国・中国・自動車・半導体を残す）</li>
+    <li>それでも足りなければ<b>2回目の通し</b>をやめる</li>
+  </ol>
+  <p style="font-size:14px;color:var(--ink-soft)">
+    <b>逆に、何があっても削らないのは第1章・第4章・第5章と、3週目の通し1回です。</b>
+    ここさえ守れば、計画が半分崩れても平均は超えます。
+  </p>
+</section>
+
+<section>
+  <h2 class="sec">3つの穴を埋める参考リンク</h2>
+  <p>
+    3週目に、この順で読んでください。1テーマ20分、合計1時間の想定です。
+    <strong>読む前に「何を確認しに行くのか」を決めてから開くこと。</strong>
+    問いを持たずに読むと、関連記事をたどって時間だけが溶けます。
+  </p>
+
+  <div class="ref">
+    <p class="ref-theme">1. 歴史的株高</p>
+    <p class="ref-q">確認すること：何が買われて上がったのか。上昇の担い手は誰か。</p>
+    <a href="https://www.nikkei.com/article/DGXZQOUB2744X0X20C26A5000000/">
+      <b>日経平均株価が最高値、年初から3割高　勝ち組「半導体」に資金集中</b>
+      <span>日本経済新聞（2026年5月29日）／会員限定</span>
+    </a>
+    <a href="https://www.nikkei.com/article/DGXZQOUB196R10Z10C26A5000000/">
+      <b>日経平均株価の歴史的上昇の背景は（馬渕磨理子）</b>
+      <span>日本経済新聞　解説記事</span>
+    </a>
+  </div>
+
+  <div class="ref">
+    <p class="ref-theme">2. 積極財政への転換</p>
+    <p class="ref-q">確認すること：何を「転換」したのか。どの年度から始まるのか。</p>
+    <a href="https://www5.cao.go.jp/keizai-shimon/kaigi/cabinet/honebuto/2026/decision0721.html">
+      <b>経済財政運営と改革の基本方針2026（骨太方針2026）</b>
+      <span>内閣府　経済財政諮問会議／一次資料・無料。副題まで読めば要点はつかめます</span>
+    </a>
+    <a href="https://www.dlri.co.jp/report/macro/623815.html">
+      <b>経済財政諮問会議（2026年6月30日）解説</b>
+      <span>第一ライフ資産運用経済研究所／原案段階の論点整理。一次資料が硬いと感じたらこちらから</span>
+    </a>
+  </div>
+
+  <div class="ref">
+    <p class="ref-theme">3. トランプ関税</p>
+    <p class="ref-q">確認すること：根拠となる法律が何度も変わっている経緯。自動車と鉄鋼は別枠だという構造。</p>
+    <a href="https://www.jetro.go.jp/world/us_tariff/usa.html">
+      <b>米国関税措置について</b>
+      <span>ジェトロ　特設ページ／時系列で追える。まずここを見るのが最短</span>
+    </a>
+    <a href="https://www.jetro.go.jp/biznews/2026/07/a4c34f1e9b687c71.html">
+      <b>米USTR、強制労働産品の輸入禁止措置を巡り、日本含む60カ国・地域に301条関税賦課を最終決定</b>
+      <span>ジェトロ ビジネス短信（2026年7月24日）</span>
+    </a>
+  </div>
+
+  <p class="note" style="margin-top:22px">
+    関税は法的根拠が短期間に何度も切り替わっており、
+    IEEPA、通商法122条、通商法301条、通商拡大法232条がそれぞれ別の枠組みとして併存しています。
+    細かい税率を覚える必要はありません。<b>「根拠法が変わっても関税は残った」という構造だけ</b>つかめば十分です。
+    なお、いずれの情報も本資料の作成時点のものです。試験直前にもう一度、上のジェトロ特設ページと内閣府のページだけ開いて更新を確認してください。
+  </p>
+</section>
+
+<section>
+  <h2 class="sec">当日までに済ませておくこと</h2>
+  <ul>
+    <li><b>申込の締切を今すぐ確認する。</b>テストセンター受験と全国一斉試験では、申込方法も締切も違います。勉強を始める前に、ここだけは片付けてください</li>
+    <li><b>受験形式を確かめる。</b>紙のマークシートではなくパソコンでの受験になります。全国一斉試験は自分のカメラ付きPCから受けるため、機器と通信環境の事前確認と、本人確認用の身分証が要ります</li>
+    <li><b>後で見直す機能があるか調べておく。</b>「印をつけて飛ばす」戦術は、その機能があって初めて成立します。ない場合は、飛ばした問題番号を手元にメモする運用に切り替えてください</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="sec">当日の戦術</h2>
+  <ul>
+    <li><b>1問48秒。</b>20秒考えて手がかりがなければ、印をつけて次に進む</li>
+    <li><b>空欄をつくらない。</b>4択なので、埋めるだけで期待値が生まれる。時間切れが見えたら残りを一括で埋める</li>
+    <li><b>難問に粘らない。</b>IRTでは難問1問より易問3問。深追いは損</li>
+    <li><b>第4・5章型は落ち着けば取れる。</b>知らない用語が並んでいても、関係性を問う問題は消去法が効く</li>
+    <li><b>40問目を32分で通過できているか。</b>ここだけ時計を見る。遅れていれば、以降は迷ったら即マークして進む</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="sec">やらないこと</h2>
+  <ul class="dont">
+    <li><b>他の参考書を買う。</b>1か月で2冊は回りません。公式テキストが唯一の公式教材です</li>
+    <li><b>新聞のバックナンバーを遡る。</b>費用対効果が最も低い。補うべき穴は次章の3つだけです</li>
+    <li><b>練習問題を丸暗記する。</b>公式テキストの問題がそのまま本番に出ることはないと明記されています。覚えるべきは答えではなく解き方です</li>
+    <li><b>練習問題を読みながら消費する。</b>3週目の通しのために、100問はまるごと残しておきます</li>
+    <li><b>企業名や統計の数字を覚え込む。</b>数字は変わりますが、仕組みは変わりません。「なぜそうなるか」だけを持ち帰ってください</li>
+    <li><b>満点を目指す。</b>600点は、取れる層を確実に取れば見える水準です</li>
+  </ul>
+</section>
+
+<footer>
+  試験は100問・80分の四肢択一、受験料6,600円。テストセンター受験と、年2回の全国一斉試験があります。<br>
+  教材：日経経済知力テスト公式テキスト＆問題集 2026-27年版（248ページ、練習問題100問収録）。
+  2026-27年版は歴史的株高、積極財政への転換、関税政策などを踏まえて紙面が大幅改訂されています。
+  改訂が入った箇所は今年の重点テーマと考えて、厚めに読んでください。
+</footer>
+
+</main>
+</body>
+</html>

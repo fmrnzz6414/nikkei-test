@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#16233F">
+<title>日経TEST 用語カード</title>
+<style>
+:root{
+  --navy:#16233F; --navy-deep:#101A30; --navy-line:#2B3A5C;
+  --paper:#F6F3EC; --paper-edge:#E4DFD3;
+  --ink:#22252C; --ink-soft:#6E6A61;
+  --slate:#8A97B2; --brass:#C08A2E; --brass-lit:#E3B457;
+  --mincho:"Hiragino Mincho ProN","Yu Mincho","YuMincho","Noto Serif JP",serif;
+  --gothic:"Hiragino Kaku Gothic ProN","Yu Gothic","YuGothic","Meiryo",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;background:var(--navy)}
+body{
+  background:var(--navy);color:#E8EBF2;
+  font-family:var(--gothic);font-size:16px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+@supports(min-height:100dvh){body{min-height:100dvh}}
+
+#app{
+  max-width:520px;margin:0 auto;
+  padding:calc(6px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));
+}
+
+.bar{display:flex;align-items:center;gap:14px;padding:14px 0 12px}
+.bar-count{margin-left:auto;font-size:13px;color:var(--slate);font-variant-numeric:tabular-nums}
+.track{height:2px;background:var(--navy-line);border-radius:2px;overflow:hidden}
+.track > i{display:block;height:100%;background:var(--brass);width:0;transition:width .3s ease}
+
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer;
+  appearance:none;-webkit-appearance:none}
+.btn{display:block;width:100%;padding:16px;border-radius:3px;background:var(--brass);
+  color:#1A1408;font-weight:700;letter-spacing:.04em;transition:opacity .15s}
+.btn:active{opacity:.75}
+.btn-quiet{background:none;border:1px solid var(--navy-line);color:#C9D1E2;font-weight:400}
+.link{color:var(--slate);font-size:13px;text-decoration:underline;text-underline-offset:3px;padding:8px}
+:focus-visible{outline:2px solid var(--brass-lit);outline-offset:3px}
+
+.screen{display:none}
+.screen.on{display:block}
+
+.hero{padding:26px 0 22px;border-bottom:1px solid var(--navy-line)}
+.hero h1{font-family:var(--mincho);font-size:15px;font-weight:400;color:var(--slate);letter-spacing:.2em;margin-bottom:18px}
+.due{display:flex;align-items:baseline;gap:10px}
+.due b{font-size:60px;font-weight:400;font-family:var(--mincho);line-height:.95;color:#fff;font-variant-numeric:tabular-nums}
+.due span{font-size:14px;color:var(--slate)}
+.due-note{margin-top:12px;font-size:13.5px;color:var(--slate);line-height:1.75}
+
+.scope-head{display:flex;align-items:baseline;gap:10px;padding:20px 0 2px}
+.scope-head b{font-size:13px;font-weight:400;color:#D6DCE9;letter-spacing:.05em}
+.scope-head span{margin-left:auto;font-size:11.5px;color:var(--slate)}
+.genres{padding:4px 0 18px}
+.genre{display:flex;align-items:center;gap:11px;padding:10px 0;width:100%;text-align:left;
+  opacity:.36;transition:opacity .15s}
+.genre.on{opacity:1}
+.box{width:16px;height:16px;flex:0 0 16px;border:1px solid var(--navy-line);border-radius:2px;position:relative}
+.genre.on .box{background:var(--brass);border-color:var(--brass)}
+.genre.on .box::after{content:"";position:absolute;left:5px;top:1px;width:4px;height:8px;
+  border:solid #1A1408;border-width:0 2px 2px 0;transform:rotate(42deg)}
+.genre-name{font-size:13.5px;width:10.5em;flex:0 0 10.5em;color:#D6DCE9;line-height:1.4}
+.genre-name i{display:block;font-style:normal;font-size:11px;color:var(--slate)}
+.genre-track{flex:1 1 auto;height:5px;background:var(--navy-line);border-radius:3px;overflow:hidden}
+.genre-track > i{display:block;height:100%;background:var(--brass);width:0}
+.genre-num{font-size:11.5px;color:var(--slate);font-variant-numeric:tabular-nums;
+  flex:0 0 3.8em;text-align:right}
+
+.foot{display:flex;justify-content:center;gap:2px;padding-top:14px;flex-wrap:wrap}
+.warn{margin:0 0 16px;padding:12px 14px;border-left:2px solid var(--brass);
+  background:rgba(192,138,46,.09);font-size:13px;line-height:1.7;color:#DCD2BE}
+
+/* ---- カード：3D反転をやめ、面の入れ替えで表現する ---- */
+.stage{padding:14px 0 18px}
+.card{
+  background:var(--paper);color:var(--ink);border-radius:4px;
+  box-shadow:0 14px 32px rgba(0,0,0,.32);
+  padding:26px 22px;min-height:300px;
+  display:flex;flex-direction:column;cursor:pointer;
+}
+.face{display:none;flex-direction:column;flex:1 1 auto}
+.face.on{display:flex;animation:fade .22s ease both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.tag{font-size:11.5px;color:var(--ink-soft);letter-spacing:.06em}
+.term{font-family:var(--mincho);font-size:clamp(26px,7.2vw,38px);font-weight:600;
+  line-height:1.34;letter-spacing:.02em;margin:auto 0;padding:18px 0}
+.hint{font-size:12.5px;color:var(--ink-soft);text-align:center;margin-top:auto}
+.term-sm{font-family:var(--mincho);font-size:21px;font-weight:600;
+  padding-bottom:11px;margin-bottom:14px;border-bottom:1px solid var(--paper-edge)}
+.body{font-size:14.5px;line-height:1.85}
+.memo{margin-top:13px;padding-top:12px;border-top:1px dotted var(--paper-edge);
+  font-size:13px;line-height:1.8;color:var(--ink-soft)}
+
+#ctrl{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom));
+  background:var(--navy);padding-top:8px}
+.grades{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grade{padding:16px 4px;border-radius:3px;border:1px solid var(--navy-line);
+  font-size:14px;text-align:center;transition:background .15s}
+.grade:active{background:rgba(255,255,255,.07)}
+.grade[data-g="2"]{border-color:var(--brass);color:var(--brass-lit)}
+
+.done{text-align:center;padding:90px 0 40px}
+.done h2{font-family:var(--mincho);font-size:26px;font-weight:400;margin-bottom:8px}
+.done p{font-size:14px;color:var(--slate);margin-bottom:26px}
+
+.form{padding:14px 0 24px;display:flex;flex-direction:column;gap:17px}
+label{display:block;font-size:12.5px;color:var(--slate);margin-bottom:7px;letter-spacing:.05em}
+input,textarea,select{width:100%;padding:12px;background:var(--navy-deep);color:#EDF0F6;
+  border:1px solid var(--navy-line);border-radius:3px;font-family:inherit;font-size:16px;
+  appearance:none;-webkit-appearance:none}
+textarea{min-height:105px;resize:vertical;line-height:1.7}
+.saved{font-size:13px;color:var(--brass-lit);min-height:1.3em}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms !important;animation:none !important}}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <section class="screen on" id="s-home">
+    <div class="hero">
+      <h1>日経TEST 用語カード</h1>
+      <div class="due"><b id="dueN">0</b><span id="dueUnit">枚が今日の出題</span></div>
+      <p class="due-note" id="dueNote"></p>
+    </div>
+    <div class="scope-head"><b>今週の範囲</b><span>タップで切り替え</span></div>
+    <div class="genres" id="genres"></div>
+    <div id="warnSlot"></div>
+    <button class="btn" id="start">今日のカードを始める</button>
+    <div class="foot">
+      <button class="link" id="toAdd">カードを追加</button>
+      <a class="link" href="plan.html">1か月の進め方</a>
+      <button class="link" id="toReset">記録をリセット</button>
+    </div>
+  </section>
+
+  <section class="screen" id="s-card">
+    <div class="bar">
+      <button class="link" id="quit" style="padding:0">やめる</button>
+      <span class="bar-count" id="pos">0 / 0</span>
+    </div>
+    <div class="track"><i id="prog"></i></div>
+    <div class="stage">
+      <div class="card" id="card">
+        <div class="face on" id="faceF">
+          <span class="tag" id="tagF"></span>
+          <div class="term" id="termF"></div>
+          <div class="hint">カードをタップして答えを見る</div>
+        </div>
+        <div class="face" id="faceB">
+          <div class="term-sm" id="termB"></div>
+          <div class="body"><span id="descB"></span><div class="memo" id="memoB"></div></div>
+        </div>
+      </div>
+    </div>
+    <div id="ctrl"></div>
+  </section>
+
+  <section class="screen" id="s-done">
+    <div class="done">
+      <h2>今日の分は終わりです</h2>
+      <p id="doneP"></p>
+      <button class="btn btn-quiet" id="back">最初の画面に戻る</button>
+    </div>
+  </section>
+
+  <section class="screen" id="s-add">
+    <div class="bar"><button class="link" id="addBack" style="padding:0">戻る</button></div>
+    <div class="form">
+      <p style="font-size:13.5px;color:var(--slate);line-height:1.8">
+        テキストを読んでいて「これは覚えたい」と思った用語を入れてください。自分で書いたカードが一番定着します。
+      </p>
+      <div><label for="fT">用語</label><input id="fT" placeholder="例：資本コスト経営"></div>
+      <div><label for="fG">章</label><select id="fG"></select></div>
+      <div><label for="fD">説明</label><textarea id="fD" placeholder="自分の言葉で短く"></textarea></div>
+      <div><label for="fM">補足（任意）</label><input id="fM" placeholder="ひっかかりやすい点など"></div>
+      <span class="saved" id="saved"></span>
+      <button class="btn" id="fSave">カードを保存</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =========================================================
+   日経TEST 用語カード v3
+   iOS Safari 対応版。3D反転・最新構文・固定高さを排除。
+   ========================================================= */
+const CATS=[
+ {n:"基礎①　マクロ",         s:"第1章　景気・物価・雇用"},
+ {n:"基礎②　市場と指標",     s:"第1章　金利・為替・株価"},
+ {n:"実践①　産業",           s:"第2章　自動車・半導体ほか"},
+ {n:"実践②　実務常識",       s:"第2章　会計・法務・戦略"},
+ {n:"視野の広さ",             s:"第3章　国際・脱炭素・AI"},
+ {n:"考える力の型",           s:"第4・5章　最優先"},
+ {n:"今年の3テーマ",          s:"株高・積極財政・関税"}
+];
+
+const DECK=[
+/* ===== 0. 基礎① マクロ（第1章） ===== */
+{id:"gdp",g:0,t:"名目GDP / 実質GDP",d:"一定期間に国内で生み出された付加価値の合計。名目はその時の価格のまま、実質は物価変動の影響を取り除いたもの。",m:"景気の実勢を見るのは実質。物価が上がると名目だけが膨らむ。"},
+{id:"deflator",g:0,t:"GDPデフレーター",d:"名目GDPを実質GDPで割った値。国内で生産されたモノ・サービス全体の物価水準を示す。",m:"輸入物価を含まないため、CPIより「国内の物価」を素直に映す。"},
+{id:"gap",g:0,t:"潜在成長率とGDPギャップ",d:"潜在成長率は、労働・資本・生産性を平常どおり使い切って達成できる成長率。実際の成長率との差がGDPギャップ（需給ギャップ）。",m:"ギャップがプラスなら需要超過で物価が上がりやすい。"},
+{id:"cpi",g:0,t:"コアCPI / コアコアCPI",d:"消費者物価指数から、日本ではコアが生鮮食品を除いたもの、コアコアが生鮮食品とエネルギーを除いたもの。",m:"日銀が物価目標で主に見るのはコア。定義が国により違う点が問われやすい。"},
+{id:"ppi",g:0,t:"企業物価指数と消費者物価指数",d:"企業物価指数は企業間で取引されるモノの価格、消費者物価指数は家計が買うモノ・サービスの価格を示す。",m:"企業物価が先に動き、遅れて消費者物価に転嫁される。"},
+{id:"tankan",g:0,t:"日銀短観",d:"日本銀行が四半期ごとに企業へ行う調査。景況感を示す業況判断DIが代表的な指標。",m:"DIは「良い」と答えた割合から「悪い」を引いた値。ゼロが境目。"},
+{id:"di",g:0,t:"景気動向指数",d:"複数の経済指標を統合した指数。先行・一致・遅行の3系列があり、景気の局面判断に使う。",m:"一致指数が景気の現状、先行指数が数か月先を示す。"},
+{id:"jobs",g:0,t:"有効求人倍率",d:"公共職業安定所で、求職者1人あたり何件の求人があるかを示す比率。1倍超で人手不足を示す。",m:"完全失業率より景気に先行して動きやすい。"},
+{id:"unemp",g:0,t:"完全失業率",d:"労働力人口に占める、働く意思と能力があるのに職に就いていない人の割合。",m:"求職活動をしていない人は労働力人口に入らない。"},
+{id:"realwage",g:0,t:"実質賃金",d:"名目賃金を物価上昇分で割り引いた賃金。生活実感に近い指標。",m:"賃上げしても物価上昇が上回れば実質賃金は下がる。"},
+{id:"ms",g:0,t:"マネーストックとマネタリーベース",d:"マネーストックは世の中に出回るお金の総量。マネタリーベースは中央銀行が直接供給するお金。",m:"両者は別物。緩和で後者を増やしても前者が増えるとは限らない。"},
+{id:"ca",g:0,t:"経常収支 / 貿易収支",d:"経常収支は貿易・サービス、第一次所得（海外投資の利子配当）などの合計。貿易収支はモノの輸出入の差額。",m:"日本は貿易赤字でも所得収支の黒字で経常黒字になりやすい。"},
+{id:"pb",g:0,t:"プライマリーバランス",d:"国債の元利払いを除いた歳出を、税収などの歳入でどれだけ賄えているかを示す収支。",m:"財政健全化目標の基準として長く使われてきた。"},
+
+/* ===== 1. 基礎② 市場と指標（第1章） ===== */
+{id:"policy",g:1,t:"政策金利",d:"中央銀行が金融政策の操作目標とする短期金利。引き上げは金融引き締め、引き下げは緩和を意味する。",m:"日本では無担保コールレート翌日物が対象。"},
+{id:"longrate",g:1,t:"長期金利",d:"一般に10年物国債の利回りを指す。住宅ローンや企業の長期借入の金利の目安になる。",m:"政策金利と違い、市場の需給と将来の物価見通しで決まる。"},
+{id:"bondprice",g:1,t:"債券価格と金利の関係",d:"債券価格が上がると利回りは下がり、価格が下がると利回りは上がる。両者は必ず逆に動く。",m:"「国債が売られた」＝価格下落＝金利上昇。ニュースの読み替えができるように。"},
+{id:"yield",g:1,t:"イールドカーブ / 逆イールド",d:"残存期間と利回りを結んだ曲線。長短が逆転して短期の方が高くなる状態が逆イールド。",m:"逆イールドは景気後退の予兆とされる。"},
+{id:"qqe",g:1,t:"量的緩和 / YCC",d:"量的緩和は中央銀行が国債等を買い資金供給量を増やす政策。YCCは長短金利の水準そのものを操作する枠組み。",m:""},
+{id:"normal",g:1,t:"金融正常化（金利ある世界）",d:"マイナス金利や大規模緩和といった非伝統的な政策を終え、金利機能が働く状態に戻すこと。",m:"預金金利・住宅ローン・企業の資金調達コストが同時に動く。"},
+{id:"fx",g:1,t:"円安が企業に与える影響",d:"輸出企業は円換算の売上・利益が増えて追い風、輸入依存の企業や家計はコスト増で逆風になる。",m:"「円安＝日本経済に good」ではない。誰の立場かで答えが変わる典型問題。"},
+{id:"ratediff",g:1,t:"為替を動かす内外金利差",d:"金利の高い通貨に資金が集まりやすいため、日米の金利差が開くと円安、縮まると円高に振れやすい。",m:"金融政策の変更が為替に直結する道筋がこれ。"},
+{id:"reer",g:1,t:"実効為替レート",d:"対ドルだけでなく、貿易相手国の通貨全体に対する円の強さを加重平均した指標。",m:"対ドルで円高でも、実効ベースでは円安ということが起こる。"},
+{id:"ppp",g:1,t:"購買力平価（PPP）",d:"同じ財を同じ価格で買えるように為替レートが決まるとする考え方。長期的な為替の目安とされる。",m:"ビッグマック指数はこれを単純化したもの。"},
+{id:"nikkei",g:1,t:"日経平均株価 と TOPIX",d:"日経平均は225銘柄の株価を平均した指数。TOPIXは東証の広範な銘柄を時価総額で加重した指数。",m:"日経平均は値がさ株、TOPIXは大型株の影響を受けやすい。"},
+{id:"mcap",g:1,t:"時価総額",d:"株価に発行済株式数を掛けた、企業の市場での評価額。",m:"株価の高さと企業規模は別。比較には時価総額を使う。"},
+{id:"eps",g:1,t:"EPS（1株当たり利益）",d:"純利益を発行済株式数で割った値。PERの分母になる。",m:"自社株買いで株数が減ると、利益が同じでもEPSは上がる。"},
+{id:"per",g:1,t:"PER（株価収益率）",d:"株価を1株当たり純利益で割った倍率。利益の何年分が株価に織り込まれているかを示す。",m:"高いほど期待が大きい、または割高。"},
+{id:"pbr",g:1,t:"PBR（株価純資産倍率）",d:"株価を1株当たり純資産で割った倍率。1倍割れは時価総額が解散価値を下回る状態。",m:"1倍割れ企業への改善要請が近年の大きなテーマ。"},
+{id:"roe",g:1,t:"ROE（自己資本利益率）",d:"純利益を自己資本で割った比率。株主が出したお金でどれだけ稼いだかを示す。",m:"借入を増やして自己資本を圧縮しても上がるため、単独では判断しない。"},
+{id:"roic",g:1,t:"ROICと資本コスト",d:"ROICは税引後営業利益を、株主資本と有利子負債を合わせた投下資本で割った比率。資本コストは投資家が期待する最低限の収益率。",m:"ROICが資本コストを上回っているかが経営の合格ライン。"},
+{id:"buyback",g:1,t:"自社株買い",d:"企業が自社の株式を市場から買い戻すこと。発行済株式数が減るため1株当たり利益が上がる。",m:"ROE改善と株主還元の両方の狙いがある。"},
+{id:"payout",g:1,t:"配当性向 / 総還元性向",d:"配当性向は純利益のうち配当に回した割合。総還元性向は配当に自社株買いを加えた割合。",m:"株主還元の強化を測る際は総還元性向で見る。"},
+
+/* ===== 2. 実践① 産業（第2章） ===== */
+{id:"ev",g:2,t:"EV / HEV / PHEV",d:"EVは電気だけで走る車、HEVはエンジンとモーターを併用、PHEVは外部充電もできるハイブリッド。",m:"各国の政策転換で構成比の見通しが揺れている。"},
+{id:"tier1",g:2,t:"完成車メーカーとTier1",d:"完成車メーカーに直接部品を納めるのがTier1、その下請けがTier2以降という重層構造。",m:"1社の停止が全体を止めるため、供給網の可視化が課題になる。"},
+{id:"semi",g:2,t:"半導体の前工程 / 後工程",d:"前工程はウエハー上に回路を形成する工程。後工程は切り出したチップの組み立て・検査工程。",m:"後工程の実装技術が性能を左右する領域として重視されている。"},
+{id:"foundry",g:2,t:"ファウンドリ / ファブレス",d:"ファウンドリは製造を専門に受託する企業。ファブレスは工場を持たず設計に特化する企業。",m:"両方を担うのが垂直統合型（IDM）。日本は製造装置と材料に強みがある。"},
+{id:"sme",g:2,t:"半導体製造装置と材料",d:"露光装置や洗浄装置などの製造装置と、シリコンウエハーやレジストなどの材料。日本企業のシェアが高い分野。",m:"チップを作らなくても半導体需要の恩恵を受ける立ち位置。"},
+{id:"oil",g:2,t:"原油価格の指標",d:"米国のWTI、欧州のブレント、中東産のドバイが代表的な指標原油。日本の輸入はドバイの影響を受けやすい。",m:"産油国の協調減産と地政学リスクで動く。"},
+{id:"lng",g:2,t:"LNG（液化天然ガス）",d:"天然ガスを冷却して液化し、船で運べるようにしたもの。日本の発電燃料の柱の一つ。",m:"長期契約と、価格変動の大きいスポット調達の組み合わせで調達する。"},
+{id:"steel",g:2,t:"高炉と電炉",d:"高炉は鉄鉱石と石炭から鉄をつくる方式、電炉は鉄スクラップを電気で溶かす方式。",m:"電炉はCO2排出が少なく、脱炭素の文脈で注目される。"},
+{id:"mineral",g:2,t:"重要鉱物・レアアース",d:"電池やモーターに不可欠な鉱物資源。産出と精錬が特定国に偏っている。",m:"経済安全保障で「供給網の分散」が語られる中心的な対象。"},
+{id:"logi2024",g:2,t:"物流の2024年問題",d:"トラック運転手の時間外労働に上限規制が適用されたことで生じた輸送力不足の問題。",m:"共同配送やモーダルシフトが対応策として進んでいる。"},
+{id:"modal",g:2,t:"モーダルシフト",d:"トラック輸送を鉄道や船舶に切り替えること。人手不足とCO2削減の両方に効く。",m:""},
+{id:"reit",g:2,t:"REIT（不動産投資信託）",d:"投資家から集めた資金で不動産を保有し、賃料収入を分配する仕組み。",m:"金利が上がると調達コストが増え、価格が下がりやすい。"},
+{id:"office",g:2,t:"オフィス空室率",d:"貸しオフィスのうち空いている面積の割合。オフィス市況の代表的な指標。",m:"空室率が下がると賃料が上がる。景気と働き方の両方を映す。"},
+{id:"conscost",g:2,t:"建設コストの上昇",d:"資材価格と人件費の上昇で工事費が膨らむこと。着工の先送りや計画見直しにつながる。",m:"再開発・インフラ更新の採算を直撃する。"},
+{id:"us",g:2,t:"米国の金融政策と世界市場",d:"米連邦準備制度理事会（FRB）の利上げ・利下げは、為替と世界の資金の流れを通じて日本市場にも波及する。",m:"米金利が下がると円高に振れやすい。"},
+{id:"china",g:2,t:"中国の不動産不況",d:"不動産開発企業の債務問題から住宅市場が冷え込み、内需と地方財政に影響が及んでいる状況。",m:"日本にとっては素材・機械の輸出に響く。"},
+
+/* ===== 3. 実践② 実務常識（第2章） ===== */
+{id:"profit",g:3,t:"営業利益 / 経常利益 / 純利益",d:"営業利益は本業の儲け。経常利益はそこに利息や為替差損益など財務的な損益を加えたもの。純利益は特別損益と税を差し引いた最終利益。",m:"「本業が好調か」を見るなら営業利益。"},
+{id:"ebitda",g:3,t:"EBITDA",d:"利払い・税金・減価償却前の利益。設備投資の大きい企業や国際比較で使われる、キャッシュ創出力に近い指標。",m:"会計基準や税制の違いの影響を受けにくい。"},
+{id:"fcf",g:3,t:"フリーキャッシュフロー",d:"営業活動で得た現金から設備投資などを差し引いた、企業が自由に使える資金。",m:"配当・自社株買い・M&Aの原資になる。"},
+{id:"equity",g:3,t:"自己資本比率",d:"総資産に占める自己資本の割合。返済不要の資金でどれだけ資産を賄っているかを示す財務安全性の指標。",m:""},
+{id:"bep",g:3,t:"損益分岐点",d:"売上高と費用が等しくなり利益がゼロになる売上水準。固定費と変動費の構造で決まる。",m:"固定費が重い業種ほど景気変動に弱い。"},
+{id:"goodwill",g:3,t:"のれん",d:"買収額が買収先の純資産を上回った差額。ブランドや技術など目に見えない価値を表す。",m:"日本基準では定期償却、IFRSでは償却せず減損判定のみ。"},
+{id:"impair",g:3,t:"減損損失",d:"買収した事業や設備の収益性が落ち、帳簿価額を回収できないときに計上する損失。",m:"現金は出ていかないが最終利益を大きく押し下げる。"},
+{id:"ifrs",g:3,t:"IFRS（国際財務報告基準）",d:"国際会計基準審議会が定める会計基準。海外展開する企業を中心に日本でも任意適用が広がっている。",m:"のれんを償却しない点が日本基準との代表的な違い。"},
+{id:"cgcode",g:3,t:"コーポレートガバナンス・コード",d:"上場企業が守るべき企業統治の原則をまとめた指針。取締役会の実効性や株主との対話を求める。",m:"法律ではなく、従わない場合は理由の説明を求める方式。"},
+{id:"outdir",g:3,t:"社外取締役",d:"当該会社の業務執行に関わらない立場から経営を監督する取締役。",m:"独立性の確保と、複数選任が求められている。"},
+{id:"tob",g:3,t:"TOB（株式公開買付け）",d:"買付期間・価格・株数を公表し、市場外でまとめて株式を買い集める手法。",m:"経営陣が賛同すれば友好的、反対なら敵対的TOB。"},
+{id:"mbo",g:3,t:"MBO",d:"経営陣が自社株を買い取って独立・非公開化すること。",m:"短期的な株主圧力から離れて構造改革を進める狙いがある。"},
+{id:"activist",g:3,t:"アクティビスト（物言う株主）",d:"株式を取得したうえで、増配・自社株買い・事業売却などを経営陣に積極的に提案する投資家。",m:"近年は日本企業への提案件数が大きく増えている。"},
+{id:"ma",g:3,t:"M&A とシナジー",d:"企業の合併・買収。統合により単独では得られない相乗効果（シナジー）を狙う。",m:"シナジーが見込みを下回ると、のれんの減損につながる。"},
+{id:"pmi",g:3,t:"PMI（統合プロセス）",d:"M&A成立後に、制度・システム・組織文化を統合して効果を出す一連の作業。",m:"M&Aの成否はここで決まるとされる。"},
+{id:"carveout",g:3,t:"カーブアウト / 事業ポートフォリオ見直し",d:"事業の一部を切り出して売却・分社化し、成長分野に経営資源を集中させること。",m:"ノンコア事業の売却先としてファンドが増えている。"},
+{id:"bcp",g:3,t:"BCP（事業継続計画）",d:"災害や供給網の断絶が起きても中核事業を継続・早期復旧させるための計画。",m:""},
+{id:"36",g:3,t:"36協定",d:"法定労働時間を超えて働かせる場合に、労使で結んで労働基準監督署に届け出る協定。",m:"残業時間には罰則付きの上限が設けられている。"},
+{id:"equalpay",g:3,t:"同一労働同一賃金",d:"同じ内容の仕事であれば、正社員と非正規社員の間で不合理な待遇差を設けてはならないとする考え方。",m:""},
+{id:"jobtype",g:3,t:"ジョブ型雇用",d:"職務内容を明確に定めて人を採用・処遇する仕組み。職能や年功を軸とするメンバーシップ型と対比される。",m:"賃金は人ではなく職務に紐づく。"},
+{id:"antitrust",g:3,t:"優越的地位の濫用",d:"取引上の強い立場を利用して、相手方に不当な要求をする行為。独占禁止法で禁じられている。",m:"価格転嫁の拒否も対象になりうる。"},
+{id:"shitauke",g:3,t:"下請法",d:"親事業者が下請事業者に対し、支払遅延や不当な代金減額などを行うことを禁じる法律。",m:"独占禁止法を補完する位置づけ。"},
+{id:"ip",g:3,t:"特許 / 意匠 / 商標",d:"特許は技術的発明、意匠はデザイン、商標は商品やサービスの目印を保護する権利。",m:"保護対象と存続期間がそれぞれ異なる。"},
+{id:"insider",g:3,t:"インサイダー取引規制",d:"公表前の重要事実を知る立場の者が、その情報をもとに株式等を売買することを禁じる規制。",m:"情報を伝えた側も規制の対象になる。"},
+{id:"ltv",g:3,t:"LTV と CAC",d:"LTVは1人の顧客が取引期間を通じてもたらす利益の総額。CACは顧客1人を獲得するのにかかる費用。",m:"LTVがCACを上回ることが事業成立の条件。"},
+{id:"arr",g:3,t:"サブスクリプション / ARR",d:"継続課金型のビジネスモデル。ARRは年間の経常収益を示す指標。",m:"解約率（チャーン）が収益予測の鍵になる。"},
+{id:"d2c",g:3,t:"D2C",d:"メーカーが卸や小売を通さず、自社チャネルで消費者に直接販売する形態。",m:"顧客データを自社で持てる点が最大の利点。"},
+{id:"pbrand",g:3,t:"プライベートブランド（PB）",d:"小売業者が自ら企画し自社ブランドで販売する商品。",m:"粗利率が高く、値上げ局面で存在感が増す。"},
+{id:"dynamic",g:3,t:"ダイナミックプライシング",d:"需要や在庫、時間帯に応じて価格を柔軟に変動させる仕組み。",m:"航空・宿泊・興行で先行し、小売にも広がっている。"},
+{id:"retailmedia",g:3,t:"リテールメディア",d:"小売業者が持つ購買データと自社の売場やサイトを広告枠として提供する事業。",m:"小売にとって利益率の高い新たな収益源。"},
+{id:"dx",g:3,t:"DX（デジタルトランスフォーメーション）",d:"デジタル技術で製品・業務・ビジネスモデルそのものを変革すること。",m:"既存業務のIT化（デジタイゼーション）とは区別される。"},
+
+/* ===== 4. 視野の広さ（第3章） ===== */
+{id:"un",g:4,t:"国連の主要機関",d:"総会、安全保障理事会、事務局などで構成される。安保理の常任理事国は拒否権を持つ。",m:"「加盟国すべてが1票」の総会と、拒否権のある安保理の違いが問われる。"},
+{id:"g7",g:4,t:"G7 と G20",d:"G7は主要7か国の枠組み、G20は新興国を含む20の国・地域の枠組み。",m:"G20はグローバルサウスを含む点が本質的な違い。"},
+{id:"imf",g:4,t:"IMF / 世界銀行 / WTO",d:"IMFは国際通貨と金融の安定、世界銀行は開発途上国への融資、WTOは貿易ルールを担う。",m:"WTOは紛争解決機能の停滞が長く課題になっている。"},
+{id:"cn",g:4,t:"カーボンニュートラル",d:"温室効果ガスの排出量と吸収・除去量を差し引きゼロにすること。",m:"排出をゼロにすることとは意味が違う。"},
+{id:"scope",g:4,t:"スコープ1・2・3",d:"温室効果ガス排出の区分。1は自社の直接排出、2は購入した電力等による間接排出、3はサプライチェーン全体の排出。",m:"開示要請が3にまで広がっている点が近年の論点。"},
+{id:"gx",g:4,t:"GX（グリーントランスフォーメーション）",d:"化石燃料中心の経済社会を、脱炭素型に転換しつつ経済成長につなげる取り組み。",m:"排出量取引や成長志向型カーボンプライシングが手段。"},
+{id:"saf",g:4,t:"SAF（持続可能な航空燃料）",d:"廃食油や植物などを原料とし、従来の航空燃料に比べ排出を抑えられる代替燃料。",m:"航空分野の脱炭素の中心的な手段。"},
+{id:"genai",g:4,t:"生成AI / LLM",d:"大量のデータを学習し、文章や画像などを新たに作り出すAI。LLMはその中核となる大規模言語モデル。",m:"学習に使う計算資源の需要が半導体・電力に波及している。"},
+{id:"agi",g:4,t:"AGI（汎用人工知能）",d:"特定の作業に限らず、人間と同等以上に幅広い課題を扱えるAI。実現時期には見解の幅がある。",m:"現在の生成AIは特定領域に強い「特化型」の延長という整理が一般的。"},
+{id:"dc",g:4,t:"データセンターと電力需要",d:"AIの普及で計算需要が急増し、データセンターの電力消費と立地・電源確保が経営課題になっている。",m:"エネルギー政策と産業政策が接続するテーマ。"},
+{id:"pop",g:4,t:"生産年齢人口",d:"15歳以上65歳未満の人口。経済の供給力を左右する。",m:"総人口より先に減り始めるため、人手不足は総人口の減少に先行する。"},
+{id:"tfr",g:4,t:"合計特殊出生率",d:"1人の女性が生涯に産む子どもの数の推計値。人口を維持するには約2.07が必要とされる。",m:""},
+{id:"supply",g:4,t:"経済安全保障",d:"重要物資の供給網や基幹インフラ、先端技術を、他国依存や流出のリスクから守る政策領域。",m:"半導体・重要鉱物・エネルギーが中心的な対象。"},
+
+/* ===== 5. 考える力の型（第4・5章） ===== */
+{id:"induc",g:5,t:"帰納と演繹のちがい",d:"帰納は個々の事実から共通する法則を見つける考え方。演繹は法則を個々のケースに当てはめて結論を導く考え方。",m:"第4章が帰納型、第5章が演繹型。どちらを求められているかを最初に見極める。"},
+{id:"abst",g:5,t:"抽象型（第4章）",d:"複数の具体的な事象を並べ、それらに共通する概念や背景を選ばせる形式。",m:"選択肢のうち、示された事例すべてを説明できるものを選ぶ。1つでも説明できなければ切る。"},
+{id:"odd",g:5,t:"仲間外れ・仲間探し型（第4章）",d:"並んだ項目のうち1つだけ性質が異なるものを選ぶ、または同じ性質のものを組み合わせる形式。",m:"まず「何の軸で分類されているか」を言葉にする。軸が決まれば答えは自動的に決まる。"},
+{id:"conseq",g:5,t:"帰結型（第5章）",d:"ある変化が起きたとき、次に何が起こるかを選ばせる形式。",m:"「誰にとって得か・損か」を書き出すと絞れる。因果の向きを逆にした選択肢が定番の誤答。"},
+{id:"concrete",g:5,t:"具象化型（第5章）",d:"概念や法則を示し、それに当てはまる具体例を選ばせる形式。",m:"言葉が似ているだけの選択肢に注意。定義に照らして1つずつ当てはめる。"},
+{id:"elim",g:5,t:"知らない用語が出たときの手順",d:"用語の意味が分からなくても、問題文の文脈と選択肢どうしの矛盾から絞り込める場合が多い。",m:"4択のうち明らかに違う2つを切れば、正答率は25%から50%になる。まず切ることから始める。"},
+
+/* ===== 6. 今年の3テーマ ===== */
+{id:"rally",g:6,t:"株高を牽引した構図",d:"AI関連の需要拡大を背景に半導体関連企業へ資金が集まり、海外投資家の買いと円安が重なって指数を押し上げた。",m:"数字より「何が買われたか」を押さえる。指数上昇＝全業種が好調、ではない。"},
+{id:"fiscal",g:6,t:"責任ある積極財政",d:"歳出を一律に抑える従来の考え方から、戦略分野へ官民で投資し、成長と税収増につなげる方針へ転換するという考え方。骨太方針2026の柱。",m:"財政健全化の指標としてのプライマリーバランスの扱いが、従来と変わった点が要注目。"},
+{id:"tariff",g:6,t:"米国の関税と根拠法",d:"IEEPA（国際緊急経済権限法）を根拠とした関税が司法で否定された後、通商法122条を経て通商法301条へ移行。自動車や鉄鋼は通商拡大法232条という別の枠組みで課されている。",m:"税率より構造。根拠法が変わっても関税自体は残った、という流れをつかむ。"},
+{id:"tariffimpact",g:6,t:"関税が企業に与える経路",d:"輸出価格の上昇による数量減、現地生産への切り替え、調達先の分散という3つの経路で影響が出る。",m:"「関税＝輸出企業の減益」で止めず、生産拠点の移転まで結びつける。"}
+];
+
+/* ---------- storage（Safariプライベートモードでも落ちないようにする） ---------- */
+var store=(function(){
+  var mem={},ok=true;
+  try{localStorage.setItem("__t","1");localStorage.removeItem("__t");}catch(e){ok=false;}
+  return{
+    ok:ok,
+    get:function(k){
+      try{ if(ok){return localStorage.getItem(k);} }catch(e){}
+      return (mem[k]===undefined)?null:mem[k];
+    },
+    set:function(k,v){
+      try{ if(ok){localStorage.setItem(k,v);return;} }catch(e){}
+      mem[k]=v;
+    }
+  };
+})();
+
+var KEY="nt-cards-v2";
+var INTERVAL=[0,1,2,4,7,14,30];
+function today(){return Math.floor(Date.now()/864e5);}
+
+var state;
+try{ state=JSON.parse(store.get(KEY)); }catch(e){ state=null; }
+if(!state||typeof state!=="object")state={};
+if(!state.p)state.p={};
+if(!state.custom)state.custom=[];
+if(!Array.isArray(state.scope))state.scope=CATS.map(function(_,i){return i;});
+
+function save(){ store.set(KEY,JSON.stringify(state)); }
+function allCards(){ return DECK.concat(state.custom); }
+function boxOf(id){ var p=state.p[id]; return (p&&p.box)||0; }
+function $(id){ return document.getElementById(id); }
+function show(id){
+  var s=document.querySelectorAll(".screen");
+  for(var i=0;i<s.length;i++){ s[i].classList.toggle("on", s[i].id===id); }
+  window.scrollTo(0,0);
+}
+
+function dueCards(){
+  var t=today();
+  return allCards().filter(function(c){
+    if(state.scope.indexOf(c.g)<0)return false;
+    var p=state.p[c.id];
+    return !p||p.due<=t;
+  });
+}
+
+/* ---------- home ---------- */
+function renderHome(){
+  var due=dueCards(), all=allCards();
+  var inScope=all.filter(function(c){return state.scope.indexOf(c.g)>=0;});
+  var learned=inScope.filter(function(c){return boxOf(c.id)>=3;}).length;
+
+  $("dueN").textContent=due.length;
+  $("dueUnit").textContent=due.length?"枚が今日の出題":"枚";
+  $("dueNote").textContent = due.length
+    ? "選択中の範囲は"+inScope.length+"枚。うち"+learned+"枚が定着済み。1回およそ"+Math.min(20,due.length)+"枚、5分ほどで終わります。"
+    : (inScope.length ? "今日の出題はありません。明日また開いてください。" : "範囲が選ばれていません。下から章を選んでください。");
+
+  var html="";
+  for(var i=0;i<CATS.length;i++){
+    var cs=all.filter(function(x){return x.g===i;});
+    var done=cs.filter(function(x){return boxOf(x.id)>=3;}).length;
+    var pct=cs.length?Math.round(done/cs.length*100):0;
+    var on=state.scope.indexOf(i)>=0;
+    html+='<button class="genre'+(on?" on":"")+'" data-i="'+i+'" aria-pressed="'+(on?"true":"false")+'">'
+      +'<span class="box"></span>'
+      +'<span class="genre-name">'+CATS[i].n+'<i>'+CATS[i].s+'</i></span>'
+      +'<span class="genre-track"><i style="width:'+pct+'%"></i></span>'
+      +'<span class="genre-num">'+done+"/"+cs.length+'</span></button>';
+  }
+  $("genres").innerHTML=html;
+  var btns=$("genres").querySelectorAll(".genre");
+  for(var j=0;j<btns.length;j++){
+    btns[j].addEventListener("click",function(){
+      var i=parseInt(this.getAttribute("data-i"),10);
+      var at=state.scope.indexOf(i);
+      if(at>=0){ state.scope.splice(at,1); } else { state.scope.push(i); }
+      save(); renderHome();
+    });
+  }
+
+  $("warnSlot").innerHTML = store.ok ? "" :
+    '<p class="warn">この環境では進捗が保存されません。ファイルを端末に保存してから開くと、記録が残ります。</p>';
+  $("start").disabled = !due.length;
+  $("start").style.opacity = due.length?1:.4;
+}
+
+/* ---------- session ---------- */
+var queue=[], total=0, cur=null, flipped=false;
+
+function startSession(){
+  queue=dueCards().sort(function(){return Math.random()-.5;}).slice(0,20);
+  total=queue.length;
+  if(!total)return;
+  show("s-card"); next();
+}
+
+function next(){
+  if(!queue.length){
+    var t=dueCards().length;
+    $("doneP").textContent = t ? "残り"+t+"枚。続けても、明日に回しても構いません。"
+                               : "選択中の範囲はすべてさらいました。";
+    show("s-done"); renderHome(); return;
+  }
+  cur=queue[0]; flipped=false;
+  $("faceF").classList.add("on");
+  $("faceB").classList.remove("on");
+  $("tagF").textContent=CATS[cur.g].n.replace(/\u3000+/," ");
+  $("termF").textContent=cur.t;
+  $("termB").textContent=cur.t;
+  $("descB").textContent=cur.d;
+  $("memoB").textContent=cur.m||"";
+  $("memoB").style.display=cur.m?"block":"none";
+  $("ctrl").innerHTML='<button class="btn" id="reveal">答えを見る</button>';
+  $("reveal").addEventListener("click",function(e){e.stopPropagation();flip();});
+  var done=total-queue.length;
+  $("pos").textContent=(done+1)+" / "+total;
+  $("prog").style.width=(done/total*100)+"%";
+  window.scrollTo(0,0);
+}
+
+function flip(){
+  if(flipped)return;
+  flipped=true;
+  $("faceF").classList.remove("on");
+  $("faceB").classList.add("on");
+  $("ctrl").innerHTML='<div class="grades">'
+    +'<button class="grade" data-g="0">わからない</button>'
+    +'<button class="grade" data-g="1">あいまい</button>'
+    +'<button class="grade" data-g="2">わかる</button></div>';
+  var gs=$("ctrl").querySelectorAll(".grade");
+  for(var i=0;i<gs.length;i++){
+    gs[i].addEventListener("click",function(e){
+      e.stopPropagation();
+      grade(parseInt(this.getAttribute("data-g"),10));
+    });
+  }
+}
+
+function grade(g){
+  var p=state.p[cur.id]||{box:0,due:0};
+  queue.shift();
+  if(g===2){
+    p.box=Math.min(p.box+1,INTERVAL.length-1);
+    p.due=today()+INTERVAL[p.box];
+  }else if(g===1){
+    p.box=Math.max(p.box-1,0); p.due=today();
+    queue.splice(Math.min(queue.length,6),0,cur);
+  }else{
+    p.box=0; p.due=today();
+    queue.splice(Math.min(queue.length,3),0,cur);
+  }
+  state.p[cur.id]=p; save(); next();
+}
+
+/* ---------- add ---------- */
+(function(){
+  var o="";
+  for(var i=0;i<CATS.length;i++){ o+='<option value="'+i+'">'+CATS[i].n.replace(/\u3000+/," ")+"</option>"; }
+  $("fG").innerHTML=o;
+})();
+$("fSave").addEventListener("click",function(){
+  var t=$("fT").value.replace(/^\s+|\s+$/g,""), d=$("fD").value.replace(/^\s+|\s+$/g,"");
+  if(!t||!d){ $("saved").textContent="用語と説明の両方を入れてください。"; return; }
+  state.custom.push({id:"u"+Date.now(), g:parseInt($("fG").value,10), t:t, d:d,
+    m:$("fM").value.replace(/^\s+|\s+$/g,"")});
+  save();
+  $("fT").value=""; $("fD").value=""; $("fM").value="";
+  $("saved").textContent="「"+t+"」を追加しました。次の出題から入ります。";
+  renderHome();
+});
+
+/* ---------- wiring ---------- */
+$("card").addEventListener("click",flip);
+$("start").addEventListener("click",startSession);
+$("quit").addEventListener("click",function(){renderHome();show("s-home");});
+$("back").addEventListener("click",function(){renderHome();show("s-home");});
+$("toAdd").addEventListener("click",function(){$("saved").textContent="";show("s-add");});
+$("addBack").addEventListener("click",function(){show("s-home");});
+$("toReset").addEventListener("click",function(){
+  if(confirm("学習の記録と追加したカードをすべて消します。よろしいですか。")){
+    state={p:{},custom:[],scope:CATS.map(function(_,i){return i;})};
+    save(); renderHome();
+  }
+});
+document.addEventListener("keydown",function(e){
+  if(!$("s-card").classList.contains("on"))return;
+  if(e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); }
+  if(flipped&&(e.key==="1"||e.key==="2"||e.key==="3")) grade(parseInt(e.key,10)-1);
+});
+
+renderHome();
+</script>
+</body>
+</html>
